@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -168,10 +168,11 @@ REST_FRAMEWORK = {
 # JWT Configuration
 
 JWT_AUTH_DISABLED = True
-JWT_ISSUER = os.getenv('JWT_ISSUER')
-JWT_PRIVATE_KEY_RSA_CRMSERVICE = os.getenv('JWT_PRIVATE_KEY_RSA_CRMSERVICE')
-JWT_ALLOWED_ISSUER = 'bifrost'
-JWT_PUBLIC_KEY_RSA_BIFROST = os.getenv('JWT_PUBLIC_KEY_RSA_BIFROST')
+JWT_ALLOWED_ISSUER = 'buildly'
+JWT_PUBLIC_KEY_RSA_BUILDLY = os.getenv('JWT_PUBLIC_KEY_RSA_BUILDLY', '').replace('\\n', '\n')
+
+
+
 
 
 # Logging
