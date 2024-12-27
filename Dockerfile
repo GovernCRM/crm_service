@@ -5,9 +5,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-COPY ./requirements/base.txt requirements/base.txt
-COPY ./requirements/production.txt requirements/production.txt
-RUN pip install -r requirements/production.txt
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install -r requirements.txt
 
 ADD . /code
 
