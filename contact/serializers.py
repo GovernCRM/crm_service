@@ -28,3 +28,12 @@ class ContactIndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = '__all__'
+
+
+class StateRecordSerializer(serializers.ModelSerializer):
+    """
+    Serializer for StateRecord model.
+    """
+    class Meta:
+        model = Contact
+        fields = '__all__'
