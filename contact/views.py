@@ -19,15 +19,13 @@ class ContactViewSet(viewsets.ModelViewSet):
         # Use this or the ordering filter won't work
         queryset = self.filter_queryset(self.get_queryset())
         organization_uuid = request.session.get('jwt_organization_uuid')
-        queryset = queryset.filter(organization_uuid=organization_uuid)
+        queryset = queryset.filter()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     def perform_create(self, serializer):
         user_uuid = self.request.session.get('jwt_user_uuid')
-        organization_uuid = self.request.session.get('jwt_organization_uuid')
-        serializer.save(user_uuid=user_uuid,
-                        organization_uuid=organization_uuid)
+        serializer.save(user_uuid=user_uuid)
 
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
@@ -44,6 +42,9 @@ class StateRecordViewSet(viewsets.ModelViewSet):
     """
     User's contacts.
     """
+
+    def get_queryset(self):
+        return super(StateRecordViewSet, self).get_queryset()[:50]
 
     def perform_create(self, serializer):
         serializer.save()

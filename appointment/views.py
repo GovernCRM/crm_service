@@ -41,8 +41,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     def list(self, request):
         # Use this or the ordering filter won't work
         queryset = self.filter_queryset(self.get_queryset())
-        organization_uuid = request.session.get('jwt_organization_uuid')
-        queryset = queryset.filter(organization_uuid=organization_uuid)
 
         queryset = self.paginate_queryset(queryset)
 
@@ -57,8 +55,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user_uuid = self.request.session.get('jwt_user_uuid')
-        organization_uuid = self.request.session.get('jwt_organization_uuid')
-        serializer.save(owner=user_uuid, organization_uuid=organization_uuid)
+        serializer.save(owner=user_uuid)
 
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True

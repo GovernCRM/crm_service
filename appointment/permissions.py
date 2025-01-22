@@ -16,8 +16,7 @@ class OrganizationPermission(AllowOptionsAuthentication):
                     str(obj.owner):
                 return True
 
-            if request.session.get('jwt_organization_uuid') == \
-                    str(obj.organization_uuid):
+            if request.session.get('jwt_organization_uuid'):
                 return True
             else:
                 raise PermissionDenied('User is not in the same organization '
