@@ -25,7 +25,11 @@ class StateRecordUtil:
                 # Perform bulk_create for the chunk
                 StateRecord.objects.bulk_create(records, batch_size=1000)
                 processed_count += len(records)
-            return {'processed_count': processed_count, 'error_count': error_count, 'errors': errors}
+            return {
+                'processed_count': processed_count,
+                'error_count': error_count,
+                'errors': errors
+            }
 
         except Exception as e:
             print(e)

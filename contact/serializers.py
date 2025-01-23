@@ -12,7 +12,9 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate_type(self, value):
         if not value:
-            raise serializers.ValidationError("type must be an array of one or more string elements")
+            raise serializers.ValidationError(
+                "type must be an array of one or more string elements"
+            )
         return value
 
 

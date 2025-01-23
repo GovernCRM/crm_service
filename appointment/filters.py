@@ -30,6 +30,7 @@ class AppointmentFilter(django_filters.FilterSet):
         method='workflowlevel2_uuid_filter',
         help_text='UUID for the project'
     )
+
     # start_date = django_filters.DateFromToRangeFilter(widget=DateRangeWidget())
 
     class Meta:
@@ -71,6 +72,6 @@ class AppointmentFilter(django_filters.FilterSet):
         except ValueError:
             raise exceptions.ValidationError(
                 'workflowlevel2_uuids field can only have a valid UUID'
-                .format(CURRENT_USER_FILTER_KEYWORD))
+            )
         else:
             return queryset
