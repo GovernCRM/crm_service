@@ -1,4 +1,4 @@
 flake8==6.1.0
 factory_boy
 bandit
-coverage==4.5.1
+coverage==4.5.1G
