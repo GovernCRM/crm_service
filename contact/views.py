@@ -18,7 +18,6 @@ class ContactViewSet(viewsets.ModelViewSet):
     def list(self, request):
         # Use this or the ordering filter won't work
         queryset = self.filter_queryset(self.get_queryset())
-        organization_uuid = request.session.get('jwt_organization_uuid')
         queryset = queryset.filter()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
