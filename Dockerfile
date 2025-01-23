@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.11
 
 # Do not buffer log messages in memory; some messages can be lost otherwise
 ENV PYTHONUNBUFFERED 1
