@@ -30,12 +30,12 @@ class AppointmentFilter(django_filters.FilterSet):
         method='workflowlevel2_uuid_filter',
         help_text='UUID for the project'
     )
-    start_date = django_filters.DateFromToRangeFilter(widget=DateRangeWidget())
+
+    # start_date = django_filters.DateFromToRangeFilter(widget=DateRangeWidget())
 
     class Meta:
         model = Appointment
-        fields = ['contact_uuid', 'owner', 'invitee', 'workflowlevel2_uuid',
-                  'start_date']
+        fields = ['contact_uuid', 'owner', 'invitee', 'start_date']
 
     def owner_filter(self, queryset, field_name, value):
         if value == CURRENT_USER_FILTER_KEYWORD:
@@ -72,6 +72,6 @@ class AppointmentFilter(django_filters.FilterSet):
         except ValueError:
             raise exceptions.ValidationError(
                 'workflowlevel2_uuids field can only have a valid UUID'
-                .format(CURRENT_USER_FILTER_KEYWORD))
+            )
         else:
-            return queryset.filter(workflowlevel2_uuids__contains=[value])
+            return queryset

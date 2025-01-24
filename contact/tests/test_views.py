@@ -33,7 +33,6 @@ class ContactListViewsTest(TestCase):
         self.assertEqual(response.data, [])
 
     def test_list_contacts(self):
-        siteprofile_uuids = [str(uuid.uuid4()), str(uuid.uuid4())]
         mfactories.Contact(
             first_name='David',
             addresses=[
@@ -46,15 +45,11 @@ class ContactListViewsTest(TestCase):
                     'country': 'United States',
                 },
             ],
-            siteprofile_uuids=siteprofile_uuids,
             emails=[
                 {'type': 'private', 'email': 'contact@bowie.co.uk'},
                 {'type': 'office', 'email': 'bowie@label.co.uk'},
             ],
-            notes="Bowie's notes",
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1],
-            workflowlevel2_uuids=[self.wflvl2],
+            notes="Bowie's notes"
         )
 
         request = self.factory.get('')
@@ -79,7 +74,6 @@ class ContactListViewsTest(TestCase):
                     'country': 'United States',
                 },
             ])
-        self.assertEqual(contact['siteprofile_uuids'], siteprofile_uuids)
         self.assertEqual(
             contact['emails'],
             [
@@ -87,12 +81,6 @@ class ContactListViewsTest(TestCase):
                 {'type': 'office', 'email': 'bowie@label.co.uk'},
             ])
         self.assertEqual(contact['notes'], "Bowie's notes")
-        self.assertEqual(contact['organization_uuid'],
-                         self.organization_uuid)
-        self.assertEqual(contact['workflowlevel1_uuids'],
-                         [self.wflvl1])
-        self.assertEqual(contact['workflowlevel2_uuids'],
-                         [self.wflvl2])
 
     def test_list_contacts_diff_user_same_org(self):
         mfactories.Contact(
@@ -111,8 +99,7 @@ class ContactListViewsTest(TestCase):
                 {'type': 'private', 'email': 'contact@bowie.co.uk'},
                 {'type': 'office', 'email': 'bowie@label.co.uk'},
             ],
-            notes="Bowie's notes",
-            organization_uuid=self.organization_uuid,
+            notes="Bowie's notes"
         )
         request = self.factory.get('')
         user_other = mfactories.User(first_name='John', last_name='Lennon')
@@ -140,8 +127,7 @@ class ContactListViewsTest(TestCase):
                 {'type': 'private', 'email': 'contact@bowie.co.uk'},
                 {'type': 'office', 'email': 'bowie@label.co.uk'},
             ],
-            notes="Bowie's notes",
-            organization_uuid=self.organization_uuid,
+            notes="Bowie's notes"
         )
         request = self.factory.get('')
         user_other = mfactories.User(first_name='John', last_name='Lennon')
@@ -151,11 +137,10 @@ class ContactListViewsTest(TestCase):
         view = ContactViewSet.as_view({'get': 'list'})
         response = view(request)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 1)
 
     def test_list_contacts_ordering_asc(self):
-        mfactories.Contact.create_batch(
-            size=2, **{'organization_uuid': self.organization_uuid})
+        mfactories.Contact.create_batch(size=2)
 
         request = self.factory.get('', {'ordering': 'first_name'})
         request.user = self.user
@@ -168,8 +153,7 @@ class ContactListViewsTest(TestCase):
         self.assertEqual(response.data[1]['first_name'], 'Nina')
 
     def test_list_contacts_ordering_desc(self):
-        mfactories.Contact.create_batch(
-            size=2, **{'organization_uuid': self.organization_uuid})
+        mfactories.Contact.create_batch(size=2)
 
         request = self.factory.get('', {'ordering': '-first_name'})
         request.user = self.user
@@ -193,8 +177,6 @@ class ContactRetrieveViewsTest(TestCase):
         self.factory = APIRequestFactory()
         self.user = mfactories.User()
         self.organization_uuid = str(uuid.uuid4())
-        self.wflvl1 = str(uuid.uuid4())
-        self.wflvl2 = str(uuid.uuid4())
         self.session = {
             'jwt_organization_uuid': self.organization_uuid,
             'jwt_username': 'Test User',
@@ -202,8 +184,7 @@ class ContactRetrieveViewsTest(TestCase):
         }
 
     def test_retrieve_contact(self):
-        contact = mfactories.Contact(user_uuid=self.session['jwt_user_uuid'],
-                                     organization_uuid=self.organization_uuid)
+        contact = mfactories.Contact(user_uuid=self.session['jwt_user_uuid'])
         request = self.factory.get('')
         request.user = self.user
         request.session = self.session
@@ -236,7 +217,7 @@ class ContactRetrieveViewsTest(TestCase):
         request.session["jwt_organization_uuid"] = str(uuid.uuid4())
         view = ContactViewSet.as_view({'get': 'retrieve'})
         response = view(request, pk=contact.pk)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
     def test_retrieve_contact_not_owner(self):
         contact = mfactories.Contact(user_uuid=uuid.uuid4())
@@ -246,7 +227,7 @@ class ContactRetrieveViewsTest(TestCase):
         request.session = self.session
         view = ContactViewSet.as_view({'get': 'retrieve'})
         response = view(request, pk=contact.pk)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
     def test_list_contacts_anonymoususer(self):
         request_get = self.factory.get('')
@@ -271,9 +252,7 @@ class ContactCreateViewsTest(TestCase):
     def test_create_contact_minimal(self):
         data = {
             'first_name': 'Máx',
-            'last_name': 'Cöoper',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
+            'last_name': 'Cöoper'
         }
 
         request = self.factory.post(  # trick to pass a list in a payload
@@ -288,15 +267,12 @@ class ContactCreateViewsTest(TestCase):
         self.assertEqual(contact.user_uuid, self.session['jwt_user_uuid'])
         self.assertEqual(contact.first_name, data['first_name'])
         self.assertEqual(contact.last_name, data['last_name'])
-        self.assertEqual(contact.organization_uuid, self.organization_uuid)
 
     def test_create_contact_org_and_user_set_by_jwt(self):
         data = {
             'first_name': 'Máx',
             'last_name': 'Cöoper',
             'user_uuid': 'Test',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
         }
 
         request = self.factory.post(  # trick to pass a list in a payload
@@ -311,17 +287,11 @@ class ContactCreateViewsTest(TestCase):
         self.assertEqual(contact.user_uuid, self.session['jwt_user_uuid'])
         self.assertEqual(contact.first_name, data['first_name'])
         self.assertEqual(contact.last_name, data['last_name'])
-        self.assertEqual(contact.organization_uuid, self.organization_uuid)
 
     def test_create_contact_member_all_wflvl1s(self):
-        wflvl1_other = str(uuid.uuid4())
-
         data = {
             'first_name': 'Máx',
-            'last_name': 'Cöoper',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1,
-                                     wflvl1_other],
+            'last_name': 'Cöoper'
         }
 
         request = self.factory.post(  # trick to pass a list in a payload
@@ -339,9 +309,7 @@ class ContactCreateViewsTest(TestCase):
 
         data = {
             'first_name': 'Máx',
-            'last_name': 'Cöoper',
-            'workflowlevel1_uuids': [wflvl1_other, wflvl1_extra,
-                                     self.wflvl1],
+            'last_name': 'Cöoper'
         }
 
         request = self.factory.post(  # trick to pass a list in a payload
@@ -355,8 +323,6 @@ class ContactCreateViewsTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_create_contact(self):
-        siteprofile_uuid = uuid.uuid4()
-
         data = {
             'first_name': 'Julio',
             'middle_name': 'José',
@@ -375,12 +341,9 @@ class ContactCreateViewsTest(TestCase):
                     'country': 'Spain',
                 },
             ],
-            'siteprofile_uuids': [str(siteprofile_uuid)],
             'emails': [],
             'phones': [{'type': 'office', 'number': '123'}],
             'notes': 'I am the Spanish Gigolò',
-            'workflowlevel1_uuids': [self.wflvl1],
-            'workflowlevel2_uuids': [self.wflvl2],
         }
 
         request = self.factory.post(  # trick to pass structures in a payload
@@ -391,18 +354,15 @@ class ContactCreateViewsTest(TestCase):
 
         response = view(request)
         self.assertEqual(response.status_code, 201)
-        self.assertDictContainsSubset(data, response.data)
+        self.assertEqual(response.data, {**data, **response.data})
 
-        data['siteprofile_uuids'] = [siteprofile_uuid]
         contact = Contact.objects.get(pk=response.data['id'])
-        self.assertDictContainsSubset(data, contact.__dict__)
+        self.assertEqual(contact.__dict__, {**contact.__dict__,  **data})
 
     def test_create_with_invalid_email(self):
         data = {
             'first_name': u'Máx',
             'last_name': u'Cöoper',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
             'emails': [{'type': EMAIL_TYPE_CHOICES[0], 'email': 'bad'}]
         }
         request = self.factory.post(  # trick to pass a list in a payload
@@ -420,8 +380,6 @@ class ContactCreateViewsTest(TestCase):
         data = {
             'first_name': u'Máx',
             'last_name': u'Cöoper',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
             'phones': [{'type': PHONE_TYPE_CHOICES[0], 'number': '01'}]
         }
         request = self.factory.post(  # trick to pass a list in a payload
@@ -442,8 +400,6 @@ class ContactCreateViewsTest(TestCase):
         data = {
             'first_name': u'Máx',
             'last_name': u'Cöoper',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
             'addresses': [
                 {
                     'type': 'FAKE',
@@ -480,8 +436,6 @@ class ContactUpdateViewsTest(TestCase):
         self.factory = APIRequestFactory()
         self.user = mfactories.User()
         self.organization_uuid = str(uuid.uuid4())
-        self.wflvl1 = str(uuid.uuid4())
-        self.wflvl2 = str(uuid.uuid4())
         self.session = {
             'jwt_organization_uuid': self.organization_uuid,
             'jwt_username': 'Test User',
@@ -489,9 +443,7 @@ class ContactUpdateViewsTest(TestCase):
         }
 
     def test_update_contact_minimal(self):
-        contact = mfactories.Contact(
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1])
+        contact = mfactories.Contact()
         data = {
             'first_name': 'David',
             'middle_name': 'Keith',
@@ -506,11 +458,7 @@ class ContactUpdateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_update_contact(self):
-        siteprofile_uuid = uuid.uuid4()
-        contact = mfactories.Contact(
-            emails=[{'type': 'private', 'email': 'emil@io.io'}],
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1])
+        contact = mfactories.Contact(emails=[{'type': 'private', 'email': 'emil@io.io'}])
 
         data = {
             'first_name': 'David',
@@ -526,7 +474,6 @@ class ContactUpdateViewsTest(TestCase):
                     'country': 'Spain',
                 },
             ],
-            'siteprofile_uuids': [str(siteprofile_uuid)],
             'emails': [],
             'phones': [
                 {
@@ -538,10 +485,7 @@ class ContactUpdateViewsTest(TestCase):
                     'number': '67890',
                 },
             ],
-            'notes': 'My notes',
-            'organization_uuid': 'ignore_this',
-            'workflowlevel1_uuids': [self.wflvl1],
-            'workflowlevel2_uuids': [self.wflvl2],
+            'notes': 'My notes'
         }
         request = self.factory.post('', json.dumps(data),
                                     content_type='application/json')
@@ -553,19 +497,13 @@ class ContactUpdateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
 
         contact = Contact.objects.get(pk=response.data['id'])
-        data['siteprofile_uuids'] = [siteprofile_uuid]
-        data['organization_uuid'] = self.organization_uuid
-        self.assertDictContainsSubset(data, contact.__dict__)
+        self.assertEqual(contact.__dict__, {**contact.__dict__,  **data})
 
     def test_update_contact_belonging_to_user_org(self):
-        contact = mfactories.Contact(organization_uuid=self.organization_uuid)
+        contact = mfactories.Contact()
 
-        data = {
-            'last_name': 'Lynch',
-            'workflowlevel1_uuids': [self.wflvl1],
-        }
-        request = self.factory.post('', json.dumps(data),
-                                    content_type='application/json')
+        data = {'last_name': 'Lynch'}
+        request = self.factory.post('', json.dumps(data), content_type='application/json')
         request.user = self.user
         request.session = self.session
         view = ContactViewSet.as_view({'post': 'update'})
@@ -574,12 +512,10 @@ class ContactUpdateViewsTest(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
 
         contact = Contact.objects.get(pk=response.data['id'])
-        data['organization_uuid'] = self.organization_uuid
-        self.assertDictContainsSubset(data, contact.__dict__)
+        self.assertEqual(contact.__dict__, {**contact.__dict__,  **data})
 
     def test_update_contact_not_belonging_to_user_org(self):
-        organization_other = str(uuid.uuid4())
-        contact = mfactories.Contact(organization_uuid=organization_other)
+        contact = mfactories.Contact()
 
         data = {
             'last_name': 'Lynch',
@@ -590,13 +526,10 @@ class ContactUpdateViewsTest(TestCase):
         request.session = self.session
         view = ContactViewSet.as_view({'post': 'update'})
         response = view(request, pk=contact.pk)
-        self.assertEqual(response.status_code, 403, response.data)
+        self.assertEqual(response.status_code, 200, response.data)
 
     def test_update_contact_fails_blank_field(self):
-        contact = mfactories.Contact(
-            user_uuid=self.session['jwt_user_uuid'],
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1])
+        contact = mfactories.Contact(user_uuid=self.session['jwt_user_uuid'])
 
         data = {
             'first_name': 'David',
@@ -617,9 +550,7 @@ class ContactUpdateViewsTest(TestCase):
                          ['This field may not be blank.'])
 
     def test_update_contact_fails_invalid_phone_schema(self):
-        contact = mfactories.Contact(
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1])
+        contact = mfactories.Contact()
 
         data = {
             'phones': [
@@ -641,9 +572,7 @@ class ContactUpdateViewsTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_contact_blank_field_valid(self):
-        contact = mfactories.Contact(
-            organization_uuid=self.organization_uuid,
-            workflowlevel1_uuids=[self.wflvl1])
+        contact = mfactories.Contact()
 
         data = {
             'middle_name': '',
@@ -669,8 +598,6 @@ class ContactDeleteViewsTest(TestCase):
         self.factory = APIRequestFactory()
         self.user = mfactories.User()
         self.organization_uuid = str(uuid.uuid4())
-        self.wflvl1 = str(uuid.uuid4())
-        self.wflvl2 = str(uuid.uuid4())
         self.session = {
             'jwt_organization_uuid': self.organization_uuid,
             'jwt_username': 'Test User',
@@ -678,7 +605,7 @@ class ContactDeleteViewsTest(TestCase):
         }
 
     def test_delete_contact(self):
-        contact = mfactories.Contact(organization_uuid=self.organization_uuid)
+        contact = mfactories.Contact()
         request = self.factory.delete('')
         request.user_uuid = self.user
         request.session = self.session
@@ -686,14 +613,13 @@ class ContactDeleteViewsTest(TestCase):
         view = ContactViewSet.as_view({'delete': 'destroy'})
         response = view(request, pk=contact.pk)
 
-        self.assertEquals(response.status_code, 204)
+        self.assertEqual(response.status_code, 204)
         self.assertRaises(
             Contact.DoesNotExist,
             Contact.objects.get, pk=contact.pk)
 
     def test_delete_contact_diff_org(self):
-        organization_other = str(uuid.uuid4())
-        contact = mfactories.Contact(organization_uuid=organization_other)
+        contact = mfactories.Contact()
         request = self.factory.delete('')
         request.user = self.user
         request.session = self.session
@@ -701,11 +627,11 @@ class ContactDeleteViewsTest(TestCase):
         view = ContactViewSet.as_view({'delete': 'destroy'})
         response = view(request, pk=contact.pk)
 
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 204)
 
     def test_delete_contact_diff_org_superuser(self):
         organization_other = str(uuid.uuid4())
-        contact = mfactories.Contact(organization_uuid=organization_other)
+        contact = mfactories.Contact()
         request = self.factory.delete('')
 
         su = mfactories.User()
@@ -717,13 +643,13 @@ class ContactDeleteViewsTest(TestCase):
         view = ContactViewSet.as_view({'delete': 'destroy'})
         response = view(request, pk=contact.pk)
 
-        self.assertEquals(response.status_code, 204)
+        self.assertEqual(response.status_code, 204)
 
     def test_delete_contact_anonymous_user(self):
-        contact = mfactories.Contact(organization_uuid=self.organization_uuid)
+        contact = mfactories.Contact()
         request = self.factory.delete('')
 
         view = ContactViewSet.as_view({'delete': 'destroy'})
         response = view(request, pk=contact.pk)
 
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
