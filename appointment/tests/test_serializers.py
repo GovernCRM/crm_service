@@ -18,16 +18,16 @@ class ContactNameFieldTest(TestCase):
 
     def test_contact_found(self):
         contact = cfactories.Contact()
-        obj = Mock(contact_uuid=contact.uuid)
+        obj = Mock(contact_uuid=contact.contact_uuid)
         field = ContactNameField()
         self.assertEqual(
-            field.get_attribute(obj),
-            {
+            sorted(field.get_attribute(obj).items()),
+            sorted({
                 'first_name': contact.first_name,
                 'last_name': contact.last_name,
                 'middle_name': contact.middle_name,
-                'uuid': contact.uuid
-            }
+                'contact_uuid': f'{contact.contact_uuid}'
+            }.items())
         )
 
     @patch('appointment.serializers.logger')
@@ -54,19 +54,16 @@ class AppointmentDenormalizedSerializerTest(TestCase):
             instance=appointment, context=serializer_context)
         data = serializer.data
         keys = [
-            'uuid',
+            'appointment_uuid',
             'name',
             'end_date',
             'url',
             'notes',
             'start_date',
-            'organization_uuid',
             'contact',
             'contact_uuid',
             'address',
-            'siteprofile_uuid',
             'invitee_uuids',
-            'workflowlevel2_uuids',
             'type',
             'id',
         ]

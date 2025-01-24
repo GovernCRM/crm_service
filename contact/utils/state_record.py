@@ -25,7 +25,11 @@ class StateRecordUtil:
                 # Perform bulk_create for the chunk
                 StateRecord.objects.bulk_create(records, batch_size=1000)
                 processed_count += len(records)
-            return {'processed_count': processed_count, 'error_count': error_count, 'errors': errors}
+            return {
+                'processed_count': processed_count,
+                'error_count': error_count,
+                'errors': errors
+            }
 
         except Exception as e:
             print(e)
@@ -58,17 +62,17 @@ class StateRecordUtil:
         zip_code = data[11]
 
         # Use regex to break down the address
-        address_parts = re.match(
-            r"(?P<street_num>\d+)\s*(?P<street_dir>\w+)?\s+(?P<street_name>[\w\s]+?)\s+(?P<street_type>\w+)",
-            address_line)
+        pattern = (r"(?P<street_num>\d+)\s*(?P<street_dir>\w+)?\s+"
+                   r"(?P<street_name>[\w\s]+?)\s+(?P<street_type>\w+)")
+        address_parts = re.match(pattern, address_line)
 
         address_dict = {
-            "street_num": address_parts.group("street_num") if address_parts else None,  # e.g., '364'
-            "street_dir": address_parts.group("street_dir") if address_parts else None,  # e.g., 'NW'
-            "street_name": address_parts.group("street_name").strip() if address_parts else None,  # e.g., '48Th'
-            "street_type": address_parts.group("street_type") if address_parts else None,  # e.g., 'Blvd'
-            "city": city,  # e.g., 'Gainesville'
-            "zip_code": zip_code,  # e.g., '32607'
+            "street_num": address_parts.group("street_num") if address_parts else None,
+            "street_dir": address_parts.group("street_dir") if address_parts else None,
+            "street_name": address_parts.group("street_name").strip() if address_parts else None,
+            "street_type": address_parts.group("street_type") if address_parts else None,
+            "city": city,
+            "zip_code": zip_code,
         }
         # save address
         address = Address.objects.create(**address_dict)
@@ -86,8 +90,8 @@ class StateRecordUtil:
             "voter_id": data[1],  # Voter ID
             "political_affiliation": data[24],  # 'REP'
             "status": "A" if data[28] == "ACT" else "I",  # 'ACT' -> Active
-            "date_of_birth": datetime.strptime(data[21], '%m/%d/%Y').strftime('%Y-%m-%d'),  # Converting '01/28/1995' to ISO format
-            "registration_date": datetime.strptime(data[22], '%m/%d/%Y').strftime('%Y-%m-%d'),  # Converting '12/21/2016' to ISO format
+            "date_of_birth": datetime.strptime(data[21], '%m/%d/%Y').strftime('%Y-%m-%d'),
+            "registration_date": datetime.strptime(data[22], '%m/%d/%Y').strftime('%Y-%m-%d'),
             "residential_address": address,  # Referencing the parsed address
             "county_desc": "Alachua",  # Assuming Gainesville belongs to Alachua county
             "returned_undeliverable": False,
