@@ -13,7 +13,7 @@ class ContactNameField(serializers.ReadOnlyField):
     def get_attribute(self, obj):
         if obj.contact_uuid:
             try:
-                contact = Contact.objects.get(uuid=obj.contact_uuid)
+                contact = Contact.objects.get(contact_uuid=obj.contact_uuid)
             except Contact.DoesNotExist:
                 logger.warning('Missing database record. Appointment has a '
                                'reference to a non existing Contact. UUID: {}'.

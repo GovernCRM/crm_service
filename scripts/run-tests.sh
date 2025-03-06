@@ -62,8 +62,10 @@ done
 
 set -o xtrace  # shows what's being executed
 
-if [ "$keepdb" = false ] ; then
+if [ "$ci" = true ] ; then
     pip install -r requirements/ci.txt
+else
+    pip install -r requirements/dev.txt
 fi
 
 if [ "$ci" = true ] ; then

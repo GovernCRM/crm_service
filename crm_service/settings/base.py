@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -98,14 +98,16 @@ WSGI_APPLICATION = 'crm_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.{}'.format(os.environ['DATABASE_ENGINE']),
-        'NAME': os.environ['DATABASE_NAME'],
-        'USER': os.environ['DATABASE_USER'],
+        'ENGINE': 'django.db.backends.{}'.format(os.environ.get('DATABASE_ENGINE')),
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.environ['DATABASE_PORT'],
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 
 # Password validation
@@ -132,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -157,7 +159,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'oauth2_provider_jwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'crm.permissions.AllowOptionsAuthentication',
@@ -168,10 +169,11 @@ REST_FRAMEWORK = {
 # JWT Configuration
 
 JWT_AUTH_DISABLED = True
-JWT_ISSUER = os.getenv('JWT_ISSUER')
-JWT_PRIVATE_KEY_RSA_CRMSERVICE = os.getenv('JWT_PRIVATE_KEY_RSA_CRMSERVICE')
-JWT_ALLOWED_ISSUER = 'bifrost'
-JWT_PUBLIC_KEY_RSA_BIFROST = os.getenv('JWT_PUBLIC_KEY_RSA_BIFROST')
+JWT_ALLOWED_ISSUER = 'buildly'
+JWT_PUBLIC_KEY_RSA_BUILDLY = os.getenv('JWT_PUBLIC_KEY_RSA_BUILDLY', '').replace('\\n', '\n')
+
+
+
 
 
 # Logging
@@ -210,3 +212,10 @@ LOGGING = {
 # Search Service
 
 SEARCH_SERVICE_ENABLED = True if os.getenv('SEARCH_SERVICE_ENABLED') == 'True' else False
+
+
+# for local development
+try:
+    from .local import *
+except ImportError:
+    pass

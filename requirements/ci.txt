@@ -1,6 +1,4 @@
--r base.txt
-
-bandit==1.5.1
+flake8==6.1.0
+factory_boy
+bandit
 coverage==4.5.1
-factory_boy==2.9.2
-flake8==3.5.0

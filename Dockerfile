@@ -1,13 +1,14 @@
-FROM python:3.6
+FROM python:3.11
 
 # Do not buffer log messages in memory; some messages can be lost otherwise
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /code
+# Install the project requirements.
+COPY requirements.txt /
+RUN pip install --upgrade pip
+RUN pip install -r /requirements.txt
 
-COPY ./requirements/base.txt requirements/base.txt
-COPY ./requirements/production.txt requirements/production.txt
-RUN pip install -r requirements/production.txt
+WORKDIR /code
 
 ADD . /code
 
