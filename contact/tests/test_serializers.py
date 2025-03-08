@@ -38,7 +38,13 @@ class ContactSerializerTest(TestCase):
             'contact_type',
             'customer_type',
             'notes',
-            'emails'
+            'emails',
+            'state',
+            'state_record_id',
+            'preferred_name',
+            'prefix',
+            'profession',
+            'employer'
         ]
 
         self.assertEqual(set(data.keys()), set(keys))

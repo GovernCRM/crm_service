@@ -62,6 +62,15 @@ class Contact(models.Model):
     phones = ArrayField(HStoreField(), blank=True, null=True, help_text="List of 'phone' objects with the structure: type (string - Choices: {}), number (string)".format(", ".join([k for k in PHONE_TYPE_CHOICES])), validators=[validate_phones])
     notes = models.TextField(blank=True, null=True)
 
+    state = models.CharField(max_length=4, blank=True, null=True, help_text="State of the contact")
+    state_record_id = models.UUIDField(unique=True, blank=True, null=True, help_text="Unique identifier of the state record")
+    preferred_name = models.CharField(max_length=255, blank=True, null=True, help_text="Preferred name of the contact")
+    prefix = models.CharField(max_length=10, blank=True, null=True, help_text="Prefix, e.g., Dr., Prof.")
+    profession = models.CharField(max_length=254, blank=True, null=True, help_text="Profession of the contact")
+    employer = models.CharField(max_length=254, blank=True, null=True, help_text="Employer of the contact")
+
+
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
