@@ -19,7 +19,7 @@ RUN pip install -r /requirements.txt --no-cache-dir
 ADD . /code
 
 # Collecting static files
-RUN ./scripts/collectstatic.sh
+RUN ./scripts/run-collectstatic.sh
 
 EXPOSE 8080
 ENTRYPOINT ["bash", "/code/scripts/docker-entrypoint.sh"]
