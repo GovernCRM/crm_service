@@ -25,24 +25,26 @@ class ContactSerializerTest(TestCase):
         data = serializer.data
 
         keys = [
-            'uuid',
+            'contact_uuid',
             'id',
             'first_name',
             'last_name',
             'middle_name',
             'addresses',
-            'siteprofile_uuids',
-            'workflowlevel2_uuids',
             'title',
             'url',
             'phones',
             'company',
             'contact_type',
-            'organization_uuid',
             'customer_type',
             'notes',
-            'workflowlevel1_uuids',
-            'emails'
+            'emails',
+            'state',
+            'state_record_id',
+            'preferred_name',
+            'prefix',
+            'profession',
+            'employer'
         ]
 
         self.assertEqual(set(data.keys()), set(keys))
@@ -60,7 +62,7 @@ class ContactNameSerializerTest(TestCase):
         data = serializer.data
 
         keys = [
-            'uuid',
+            'contact_uuid',
             'first_name',
             'middle_name',
             'last_name'

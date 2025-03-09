@@ -98,14 +98,16 @@ WSGI_APPLICATION = 'crm_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.{}'.format(os.environ['DATABASE_ENGINE']),
-        'NAME': os.environ['DATABASE_NAME'],
-        'USER': os.environ['DATABASE_USER'],
+        'ENGINE': 'django.db.backends.{}'.format(os.environ.get('DATABASE_ENGINE')),
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.environ['DATABASE_PORT'],
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 
 # Password validation
@@ -210,3 +212,10 @@ LOGGING = {
 # Search Service
 
 SEARCH_SERVICE_ENABLED = True if os.getenv('SEARCH_SERVICE_ENABLED') == 'True' else False
+
+
+# for local development
+try:
+    from .local import *
+except ImportError:
+    pass

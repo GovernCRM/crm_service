@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 FROM --platform=linux/amd64 python:3.9-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
+=======
+FROM python:3.11
+>>>>>>> bdee12902a9e5d3f29b9aecd464f46fbf5681c29
 
 # Do not buffer log messages in memory; some messages can be lost otherwise
 ENV PYTHONDONTWRITEBYTECODE 1

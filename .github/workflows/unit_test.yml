@@ -1,4 +1,4 @@
-name: Buildly Core Unit Test
+name: CRM Service Unit Test
 
 on:
   pull_request:
@@ -10,7 +10,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+<<<<<<< HEAD
     - name: Build the docker-compose stack
+=======
+    - name: Build the docker compose stack
+>>>>>>> bdee12902a9e5d3f29b9aecd464f46fbf5681c29
       run: docker compose build
 
     - name: Setup docker containers
@@ -20,7 +24,11 @@ jobs:
       run: docker ps -a
 
     - name: Run unit test case
+<<<<<<< HEAD
       run: docker compose run --entrypoint '/usr/bin/env' --rm buildly bash scripts/run-tests.sh --keepdb
+=======
+      run: docker compose run --entrypoint '/usr/bin/env' --rm crm_service bash scripts/run-tests.sh --keepdb --ci
+>>>>>>> bdee12902a9e5d3f29b9aecd464f46fbf5681c29
 
     - name: Stop docker container
       run: docker compose down

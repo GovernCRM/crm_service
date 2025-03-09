@@ -1,6 +1,8 @@
 import uuid
 
-from factory import DjangoModelFactory, Iterator, PostGenerationMethodCall
+from factory import Iterator, PostGenerationMethodCall
+from factory.django import DjangoModelFactory
+
 from django.contrib.auth.models import User
 
 from ..models import Contact as ContactM
@@ -42,5 +44,3 @@ class Contact(DjangoModelFactory):
     ])
     phones = []
     notes = Iterator(["Bowie's notes", "Nina's notes"])
-    organization_uuid = str(uuid.uuid4())
-    workflowlevel1_uuids = [str(uuid.uuid4())]

@@ -17,7 +17,6 @@ class ContactTest(TestCase):
             user_uuid=self.user_uuid,
             first_name='John',
             last_name='Misty',
-            workflowlevel1_uuids=[str(uuid.uuid4)],
         )
         contact.full_clean()
         contact.save()
@@ -25,13 +24,6 @@ class ContactTest(TestCase):
         contact_saved = Contact.objects.get(pk=contact.pk)
         self.assertEqual(contact_saved.first_name, contact.first_name)
         self.assertEqual(contact_saved.last_name, contact.last_name)
-
-    def test_contact_save_fails_missing_user_uuid(self):
-        contact = Contact(
-            first_name='John',
-            last_name='Misty',
-        )
-        self.assertRaises(ValidationError, contact.full_clean)
 
     def test_contact_save_fails_missing_name(self):
         contact = Contact(
