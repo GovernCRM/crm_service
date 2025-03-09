@@ -21,7 +21,7 @@ ADD . /code
 # Collecting static files
 RUN ./scripts/collectstatic.sh
 
-EXPOSE 8080s
+EXPOSE 8080
 ENTRYPOINT ["bash", "/code/scripts/docker-entrypoint.sh"]
 
 # Specify tag name to be created on github
