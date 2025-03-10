@@ -22,7 +22,7 @@ ADD . /code
 RUN ./scripts/run-collectstatic.sh
 
 EXPOSE 8080
-ENTRYPOINT ["bash", "/code/scripts/docker-entrypoint.sh"]
+ENTRYPOINT ["bash", "/code/docker-entrypoint.sh"]
 
 # Specify tag name to be created on github
 LABEL version="1.0.0"
