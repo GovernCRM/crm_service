@@ -157,6 +157,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'crm.utils.oauth.CustomJWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
@@ -213,6 +214,7 @@ LOGGING = {
 
 SEARCH_SERVICE_ENABLED = True if os.getenv('SEARCH_SERVICE_ENABLED') == 'True' else False
 
+TOKEN_SECRET_KEY = os.getenv('TOKEN_SECRET')
 
 # for local development
 try:

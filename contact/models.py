@@ -69,8 +69,6 @@ class Contact(models.Model):
     profession = models.CharField(max_length=254, blank=True, null=True, help_text="Profession of the contact")
     employer = models.CharField(max_length=254, blank=True, null=True, help_text="Employer of the contact")
 
-
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
