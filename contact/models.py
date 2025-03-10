@@ -47,6 +47,13 @@ EMAIL_TYPE_CHOICES = (
 )
 
 
+class ContactPreferenceChoices(models.TextChoices):
+    EMAIL = 'email', 'Email'
+    SMS = 'sms', 'SMS'
+    PHONE = 'phone', 'Phone'
+    MAIL = 'mail', 'Mail'
+
+
 class Contact(models.Model):
     contact_uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     user_uuid = models.UUIDField(blank=True, null=True)
@@ -68,6 +75,7 @@ class Contact(models.Model):
     prefix = models.CharField(max_length=10, blank=True, null=True, help_text="Prefix, e.g., Dr., Prof.")
     profession = models.CharField(max_length=254, blank=True, null=True, help_text="Profession of the contact")
     employer = models.CharField(max_length=254, blank=True, null=True, help_text="Employer of the contact")
+    contact_preferences = ArrayField(base_field=models.CharField(max_length=30, choices=ContactPreferenceChoices.choices), blank=True, null=True, help_text="Contact preferences as a JSON object")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
