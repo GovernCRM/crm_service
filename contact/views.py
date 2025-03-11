@@ -42,7 +42,7 @@ class ContactViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.OrderingFilter,)
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
-    permission_classes = (ContactPermission,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class StateRecordViewSet(viewsets.ModelViewSet):
