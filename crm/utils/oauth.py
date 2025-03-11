@@ -17,6 +17,7 @@ class FakeUser:
         self.username = username
         self.core_user_uuid = core_user_uuid
         self.is_authenticated = True  # Force authentication
+        self.is_superuser = False
 
     def __str__(self):
         return self.username
