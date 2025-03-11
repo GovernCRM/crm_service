@@ -30,7 +30,7 @@ class ContactViewSet(viewsets.ModelViewSet):
         kwargs['partial'] = True
         return super(ContactViewSet, self).update(request, *args, **kwargs)
 
-    @action(detail=False, methods=['POST'], url_path=r'state-record-contact/(?P<state_record_id>\w+)')
+    @action(detail=False, methods=['GET'], url_path=r'state-record-contact/(?P<state_record_id>\w+)')
     def state_record_contact(self, request, state_record_id):
         try:
             serializer = ContactSerializer(Contact.objects.get(state_record_id=state_record_id))

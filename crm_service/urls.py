@@ -22,10 +22,11 @@ urlpatterns = [
             schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
-    path('admin/', admin.site.urls),
     path('', lambda request: redirect('/health_check/')),
     path('health_check/', include('health_check.urls')),
     path(r'', include('crm.urls')),
+    path('admin/', admin.site.urls),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
