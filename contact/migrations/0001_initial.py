@@ -2,7 +2,6 @@
 
 import contact.validators
 import django.contrib.postgres.fields
-import django.contrib.postgres.fields.hstore
 import django.core.validators
 import django.db.models.deletion
 import uuid
@@ -17,6 +16,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL("CREATE EXTENSION IF NOT EXISTS hstore;"),
         migrations.CreateModel(
             name='Address',
             fields=[
