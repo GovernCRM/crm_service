@@ -30,10 +30,14 @@ class ContactViewSet(viewsets.ModelViewSet):
         kwargs['partial'] = True
         return super(ContactViewSet, self).update(request, *args, **kwargs)
 
-    @action(detail=False, methods=['GET'], url_path=r'state-record-contact/(?P<state_record_id>\w+)')
-    def state_record_contact(self, request, state_record_id):
+    @action(detail=False, methods=['GET'], url_path=r'state-record-contact/(?P<state_record_id>[^/]+)')
+    def state_record_contact(self, request, *args, **kwargs):
+        state_record_id = kwargs.get('state_record_id')
         try:
-            serializer = ContactSerializer(Contact.objects.get(state_record_id=state_record_id))
+            serializer = ContactSerializer(
+                Contact.objects.get(state_record_id=state_record_id),
+                context={'request': request}
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Contact.DoesNotExist:
             return Response({"error": "Contact not found"}, status=status.HTTP_404_NOT_FOUND)
