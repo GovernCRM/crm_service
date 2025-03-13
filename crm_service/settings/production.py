@@ -13,16 +13,17 @@ MIDDLEWARE_CORS = [
 
 MIDDLEWARE = MIDDLEWARE_CORS + MIDDLEWARE
 
-CORS_ORIGIN_WHITELIST = os.environ['CORS_ORIGIN_WHITELIST'].split(',')
-
-
 # Security
 # https://docs.djangoproject.com/en/2.0/ref/settings/#allowed-hosts
 
 try:
     ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
 except KeyError:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['127.0.0.1', '[::1]','governcrm.buildly.dev','localhost']
+
+CORS_ORIGIN_ALLOW_ALL = os.getenv('CORS_ORIGIN_ALLOW_ALL', False)
+
+CORS_ORIGIN_WHITELIST = os.environ['CORS_ORIGIN_WHITELIST'].split(',')
 
 # https://docs.djangoproject.com/en/2.0/ref/settings/#secure-proxy-ssl-header
 
