@@ -10,7 +10,7 @@ class ListTypes(models.TextChoices):
 
 
 class List(models.Model):
-    list_uuid = models.UUIDField(default=uuid.uuid4(), editable=False, unique=True)
+    list_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name="sub_lists")
