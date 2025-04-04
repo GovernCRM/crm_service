@@ -11,6 +11,7 @@ class ListViewSet(viewsets.ModelViewSet):
     queryset = List.objects.all()
     serializer_class = ListSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'list_uuid'
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
