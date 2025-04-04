@@ -14,4 +14,4 @@ class ListViewSet(viewsets.ModelViewSet):
     lookup_field = 'list_uuid'
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save()
