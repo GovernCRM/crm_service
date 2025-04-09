@@ -12,6 +12,7 @@ class ListTypes(models.TextChoices):
 class List(models.Model):
     list_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
+    organization_uuid = models.UUIDField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name="sub_lists")
     contacts = ArrayField(models.CharField(max_length=255), null=True, blank=True)
@@ -20,6 +21,8 @@ class List(models.Model):
     polygon = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    open_polls = models.IntegerField(default=0, blank=True, null=True)
+    pending_engagements = models.IntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
         return self.name
