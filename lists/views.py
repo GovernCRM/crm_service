@@ -2,6 +2,8 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
+
+from lists.filters import ListFilter
 from lists.models import List
 from lists.serializers import ListSerializer, CommunitySerializer
 
@@ -14,7 +16,7 @@ class ListViewSet(viewsets.ModelViewSet):
     serializer_class = ListSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ['list_type', 'organization_uuid']
+    filterset_class = ListFilter
     lookup_field = 'list_uuid'
 
     def list(self, request, *args, **kwargs):
@@ -30,7 +32,7 @@ class ListViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Default behavior for non-nested lists
-        return super().list(request, *args, **kwargs)
+        return super(ListViewSet, self).list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save()
