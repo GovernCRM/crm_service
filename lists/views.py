@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from lists.models import List
 from lists.serializers import ListSerializer, CommunitySerializer
 
@@ -12,6 +13,8 @@ class ListViewSet(viewsets.ModelViewSet):
     queryset = List.objects.all()
     serializer_class = ListSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ['list_type', 'organization_uuid']
     lookup_field = 'list_uuid'
 
     def list(self, request, *args, **kwargs):
