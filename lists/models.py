@@ -16,6 +16,7 @@ class List(models.Model):
     description = models.TextField(blank=True, null=True)
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name="sub_lists")
     contacts = ArrayField(models.CharField(max_length=255), null=True, blank=True)
+    contact_objects = models.JSONField(blank=True, null=True)
     list_type = models.CharField(max_length=20, choices=ListTypes.choices, default=ListTypes.LIST)
     user_uuid = models.UUIDField(blank=True, null=True)
     polygon = models.JSONField(blank=True, null=True)

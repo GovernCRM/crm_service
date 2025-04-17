@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from lists.filters import ListFilter
 from lists.models import List
-from lists.serializers import ListSerializer, CommunitySerializer
+from lists.serializers import ListSerializer, CommunitySerializer, ListSlimSerializer
 
 
 class ListViewSet(viewsets.ModelViewSet):
@@ -36,3 +36,11 @@ class ListViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+        
+    def get_serializer_class(self):
+        """
+        Override the get_serializer_class method to return different serializers based on the action.
+        """
+        if self.action == 'list':
+            return ListSlimSerializer
+        return super(ListViewSet, self).get_serializer_class()

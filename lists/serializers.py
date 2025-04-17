@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from lists.models import List
 
+class ListSlimSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = List
+        exclude = ['polygon', 'contacts', 'contact_objects']
 
 class ListSerializer(serializers.ModelSerializer):
     class Meta:
