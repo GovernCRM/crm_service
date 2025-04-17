@@ -28,8 +28,12 @@ class ListViewSet(viewsets.ModelViewSet):
         # check if nested list is requested
         if 'nested' in request.query_params:
             queryset = queryset.filter(parent__isnull=True).prefetch_related('sub_lists__sub_lists')
-            serializer = CommunitySerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # Paginate manually
+            paginator = self.pagination_class()
+            paginated_qs = paginator.paginate_queryset(queryset, request, view=self)
+
+            serializer = CommunitySerializer(paginated_qs, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         # Default behavior for non-nested lists
         return super(ListViewSet, self).list(request, *args, **kwargs)
