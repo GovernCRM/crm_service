@@ -4,11 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 
-from .models import Contact, StateRecord
+from .models import Contact, DynamicFormField
+from .serializers import ContactSerializer, DynamicFormFieldSerializer
 from .permissions import ContactPermission  # ContactPermission
-from .serializers import ContactSerializer, StateRecordSerializer
-from .utils.state_record import StateRecordUtil
-
+from .serializers import ContactSerializer, DynamicFormFieldSerializer
 
 class ContactViewSet(viewsets.ModelViewSet):
     """
@@ -49,39 +48,21 @@ class ContactViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class StateRecordViewSet(viewsets.ModelViewSet):
+class DynamicFormFieldViewSet(viewsets.ModelViewSet):
     """
-    User's contacts.
+    Dynamic form fields for contacts.
     """
-
-    def get_queryset(self):
-        return super(StateRecordViewSet, self).get_queryset()[:50]
-
+    queryset = DynamicFormField.objects.all()
+    serializer_class = DynamicFormFieldSerializer
+    permission_classes = (permissions.IsAuthenticated, ContactPermission)
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('field_name',)
+    ordering = ('field_name',)
     def perform_create(self, serializer):
-        serializer.save()
-
+        user_uuid = self.request.session.get('jwt_user_uuid')
+        serializer.save(user_uuid=user_uuid)
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
-        return super(StateRecordViewSet, self).update(request, *args, **kwargs)
+        return super(DynamicFormFieldViewSet, self).update(request, *args, **kwargs)
 
-    @action(detail=False, methods=['POST'], url_path='import-records')
-    def import_records(self, request):
-        uploaded_file = request.FILES.get('file')
 
-        # check if file is uploaded
-        if not uploaded_file:
-            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # process file data
-        state_record = StateRecordUtil()
-        try:
-            results = state_record.process_state_file(uploaded_file)
-            return Response(results, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    ordering_fields = ('first_name',)
-    filter_backends = (filters.OrderingFilter,)
-    queryset = StateRecord.objects.all()
-    serializer_class = StateRecordSerializer
-    permission_classes = (permissions.IsAuthenticated,)

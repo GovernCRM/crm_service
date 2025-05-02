@@ -99,97 +99,30 @@ class Address(models.Model):
         return f"{self.street_num} {self.street_dir or ''} {self.street_name} {self.street_type or ''}, {self.city}, {self.zip_code}"
 
 
-class PoliticalAffiliation(models.TextChoices):
-    DEMOCRATIC = 'DEM', 'Democratic'
-    REPUBLICAN = 'REP', 'Republican'
-    INDEPENDENT = 'IND', 'Independent'
-    OTHER = 'OTH', 'Other'
+class FieldType(models.TextChoices):
+    TEXT = 'text', 'Text'
+    NUMBER = 'number', 'Number'
+    DATE = 'date', 'Date'
+    EMAIL = 'email', 'Email'
+    PHONE = 'phone', 'Phone'
+    ADDRESS = 'address', 'Address'
+    SELECT = 'select', 'Select'
+    CHECKBOX = 'checkbox', 'Checkbox'
+    RADIO = 'radio', 'Radio'
+    TEXTAREA = 'textarea', 'Textarea'
 
-
-class StateChoices(models.TextChoices):
-    AL = 'AL', 'Alabama'
-    AK = 'AK', 'Alaska'
-    AZ = 'AZ', 'Arizona'
-    AR = 'AR', 'Arkansas'
-    CA = 'CA', 'California'
-    CO = 'CO', 'Colorado'
-    CT = 'CT', 'Connecticut'
-    DE = 'DE', 'Delaware'
-    FL = 'FL', 'Florida'
-    GA = 'GA', 'Georgia'
-    HI = 'HI', 'Hawaii'
-    ID = 'ID', 'Idaho'
-    IL = 'IL', 'Illinois'
-    IN = 'IN', 'Indiana'
-    IA = 'IA', 'Iowa'
-    KS = 'KS', 'Kansas'
-    KY = 'KY', 'Kentucky'
-    LA = 'LA', 'Louisiana'
-    ME = 'ME', 'Maine'
-    MD = 'MD', 'Maryland'
-    MA = 'MA', 'Massachusetts'
-    MI = 'MI', 'Michigan'
-    MN = 'MN', 'Minnesota'
-    MS = 'MS', 'Mississippi'
-    MO = 'MO', 'Missouri'
-    MT = 'MT', 'Montana'
-    NE = 'NE', 'Nebraska'
-    NV = 'NV', 'Nevada'
-    NH = 'NH', 'New Hampshire'
-    NJ = 'NJ', 'New Jersey'
-    NM = 'NM', 'New Mexico'
-    NY = 'NY', 'New York'
-    NC = 'NC', 'North Carolina'
-    ND = 'ND', 'North Dakota'
-    OH = 'OH', 'Ohio'
-    OK = 'OK', 'Oklahoma'
-    OR = 'OR', 'Oregon'
-    PA = 'PA', 'Pennsylvania'
-    RI = 'RI', 'Rhode Island'
-    SC = 'SC', 'South Carolina'
-    SD = 'SD', 'South Dakota'
-    TN = 'TN', 'Tennessee'
-    TX = 'TX', 'Texas'
-    UT = 'UT', 'Utah'
-    VT = 'VT', 'Vermont'
-    VA = 'VA', 'Virginia'
-    WA = 'WA', 'Washington'
-    WV = 'WV', 'West Virginia'
-    WI = 'WI', 'Wisconsin'
-    WY = 'WY', 'Wyoming'
-    PR = 'PR', 'Puerto Rico'
-
-
-class StateRecord(models.Model):
-    TYPE_CHOICES = [
-        ('Person', 'Person'),
-    ]
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, help_text="Unique identifier for the state record")
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='Person', help_text="Type of record")
-    original_state = models.CharField(max_length=2, choices=StateChoices.choices, help_text="State where the record originates")
-    precinct = models.CharField(max_length=6, help_text="Precinct code")
-    last_name = models.CharField(max_length=100, help_text="Last name of the person")
-    first_name = models.CharField(max_length=100, help_text="First name of the person")
-    middle_name = models.CharField(max_length=100, blank=True, null=True, help_text="Middle name of the person")
-    suffix = models.CharField(max_length=10, blank=True, null=True, help_text="Suffix, e.g., Jr., Sr., III")
-    voter_id = models.CharField(max_length=20, unique=True, help_text="Unique voter identification number")
-    political_affiliation = models.CharField(max_length=10, choices=PoliticalAffiliation.choices,  help_text="Political party affiliation")
-    status = models.CharField(max_length=1, choices=[('A', 'Active'), ('I', 'Inactive'), ('R', 'Removed')], help_text="Voter status")
-    residential_address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name="residential_record", help_text="Residential address")
-    mailing_address = models.OneToOneField(Address, on_delete=models.SET_NULL, blank=True, null=True, related_name="mailing_record", help_text="Mailing address")
-    date_of_birth = models.DateField(help_text="Date of birth of the person")
-    registration_date = models.DateField(blank=True, null=True, help_text="Date the person registered")
-    muni = models.CharField(max_length=100, blank=True, null=True, help_text="Municipality of the person")
-    muni_sub = models.CharField(max_length=100, blank=True, null=True, help_text="Subdivision of the municipality")
-    school = models.CharField(max_length=100, blank=True, null=True, help_text="School district of the person")
-    school_sub = models.CharField(max_length=100, blank=True, null=True, help_text="Subdivision of the school district")
-    tech_center = models.CharField(max_length=100, blank=True, null=True, help_text="Technology center of the person")
-    tech_center_sub = models.CharField(max_length=100, blank=True, null=True,help_text="Subdivision of the technology center")
-    county_comm = models.CharField(max_length=100, blank=True, null=True, help_text="County commission district")
-    voter_history = models.JSONField(blank=True, null=True, help_text="Historical voting data as a JSON object")
-    county_desc = models.CharField(max_length=100, help_text="Description of the county")
-    returned_undeliverable = models.BooleanField(default=False, help_text="Whether mail was returned as undeliverable")
+class DynamicFormField(models.Model):
+    field_name = models.CharField(max_length=255, help_text="Name of the dynamic form field")
+    field_type = models.CharField(max_length=50, help_text="Type of the dynamic form field", choices=FieldType.choices, help_text='Choices: {}'.format(", ".join([kv[0] for kv in FieldType.choices])))
+    field_options = ArrayField(models.CharField(max_length=255), blank=True, null=True, help_text="Options for select, checkbox, or radio fields")
+    field_required = models.BooleanField(default=False, help_text="Is the field required?")
+    field_placeholder = models.CharField(max_length=255, blank=True, null=True, help_text="Placeholder text for the field")
+    field_default_value = models.TextField(blank=True, null=True, help_text="Default value for the field")
+    field_value = models.TextField(blank=True, null=True, help_text="Value of the dynamic form field")
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='dynamic_fields', help_text="Related contact")
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.voter_id})"
+        return f"{self.field_name}: {self.field_value}"
+
+
+

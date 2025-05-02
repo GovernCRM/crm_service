@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contact, StateRecord
+from .models import Contact, ContactPreferenceChoices, DynamicFormField
 
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,12 +34,42 @@ class ContactIndexSerializer(serializers.ModelSerializer):
         model = Contact
         fields = '__all__'
 
-
-class StateRecordSerializer(serializers.ModelSerializer):
+class DynamicFormFieldSerializer(serializers.ModelSerializer):
     """
-    Serializer for StateRecord model.
+    Serializer for DynamicFormField model.
     """
-
     class Meta:
-        model = StateRecord
+        model = DynamicFormField
         fields = '__all__'
+    extra_kwargs = {
+        'id': {'read_only': True},
+        'contact': {'required': False},
+    }
+    def create(self, validated_data):
+        """
+        Create a new DynamicFormField instance.
+        """
+        return DynamicFormField.objects.create(**validated_data)
+    def update(self, instance, validated_data):
+        """
+        Update an existing DynamicFormField instance.
+        """
+        instance.field_name = validated_data.get('field_name', instance.field_name)
+        instance.field_type = validated_data.get('field_type', instance.field_type)
+        instance.field_value = validated_data.get('field_value', instance.field_value)
+        instance.save()
+        return instance
+    def validate(self, data):
+        """
+        Validate the data for DynamicFormField.
+        """
+        if not data.get('field_name'):
+            raise serializers.ValidationError("Field name is required.")
+        if not data.get('field_type'):
+            raise serializers.ValidationError("Field type is required.")
+        if not data.get('field_value'):
+            raise serializers.ValidationError("Field value is required.")
+        return data
+
+
+
