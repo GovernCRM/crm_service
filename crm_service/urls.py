@@ -4,10 +4,13 @@ from django.urls import path, include, re_path
 from django.shortcuts import redirect
 
 from rest_framework import permissions
+from rest_framework import routers
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from crm.views import health_check
+from contact.views import DynamicFormFieldViewSet, ContactViewSet
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -18,6 +21,12 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
+
+router = routers.SimpleRouter()
+
+# Register your viewsets here
+router.register(r'dynamic-form-field', DynamicFormFieldViewSet)
+router.register(r'contact', ContactViewSet)
 
 urlpatterns = [
     re_path(r'^docs/swagger(?P<format>\.json|\.yaml)$',
