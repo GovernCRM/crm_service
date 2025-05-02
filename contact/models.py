@@ -113,7 +113,9 @@ class FieldType(models.TextChoices):
 
 class DynamicFormField(models.Model):
     field_name = models.CharField(max_length=255, help_text="Name of the dynamic form field")
-    field_type = models.CharField(max_length=50, help_text="Type of the dynamic form field", choices=FieldType.choices, help_text='Choices: {}'.format(", ".join([kv[0] for kv in FieldType.choices])))
+    field_type = models.CharField(max_length=50, help_text="Type of the dynamic form field", choices=FieldType.choices, help_text="Type of field: text, number, date, email, phone, address, select, checkbox, radio, textarea")
+    field_label = models.CharField(max_length=255, help_text="Label for the dynamic form field")
+    field_help_text = models.TextField(blank=True, null=True, help_text="Help text for the dynamic form field")
     field_options = ArrayField(models.CharField(max_length=255), blank=True, null=True, help_text="Options for select, checkbox, or radio fields")
     field_required = models.BooleanField(default=False, help_text="Is the field required?")
     field_placeholder = models.CharField(max_length=255, blank=True, null=True, help_text="Placeholder text for the field")
