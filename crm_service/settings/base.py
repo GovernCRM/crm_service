@@ -57,6 +57,7 @@ INSTALLED_APPS_LOCAL = [
     'crm',
     'contact',
     'appointment',
+    'lists',
 ]
 
 INSTALLED_APPS = INSTALLED_APPS_DJANGO + INSTALLED_APPS_THIRD_PARTIES + \
@@ -163,12 +164,13 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'crm.permissions.AllowOptionsAuthentication',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'crm_service.helpers.CustomPageNumberPagination',
+    'PAGE_SIZE': 2
 }
 
 
 # JWT Configuration
-
 JWT_AUTH_DISABLED = True
 JWT_ALLOWED_ISSUER = 'buildly'
 JWT_PUBLIC_KEY_RSA_BUILDLY = os.getenv('JWT_PUBLIC_KEY_RSA_BUILDLY', '').replace('\\n', '\n')

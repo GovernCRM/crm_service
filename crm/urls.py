@@ -13,6 +13,7 @@ router.register(r'appointmentnotifications',
 urlpatterns = [
     re_path(r'^docs/', include_docs_urls(title='CRM Service')),
     re_path(r'^api/', include('contact.urls')),
+    re_path(r'^api/', include('lists.urls')),
 ]
 
 urlpatterns += router.urls
