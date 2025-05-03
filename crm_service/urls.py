@@ -38,7 +38,6 @@ urlpatterns = [
          name='schema-swagger-ui'),
     path('', health_check, name='custom_health_check'),
     path('health_check/', include('health_check.urls')),
-    path(r'', include('crm.urls')),
     path('admin/', admin.site.urls),
 
 ]
