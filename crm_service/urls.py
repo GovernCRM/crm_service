@@ -11,6 +11,7 @@ from drf_yasg import openapi
 
 from crm.views import health_check
 from contact.views import DynamicFormFieldViewSet, ContactViewSet
+from appointment.views import AppointmentViewSet
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -27,6 +28,8 @@ router = routers.SimpleRouter()
 # Register your viewsets here
 router.register(r'dynamic-form-field', DynamicFormFieldViewSet)
 router.register(r'contact', ContactViewSet)
+router.register(r'appointment', AppointmentViewSet)
+urlpatterns = router.urls
 
 urlpatterns = [
     re_path(r'^docs/swagger(?P<format>\.json|\.yaml)$',
