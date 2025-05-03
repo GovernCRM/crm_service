@@ -13,14 +13,14 @@ from crm.views import health_check
 from contact.views import DynamicFormFieldViewSet, ContactViewSet
 from appointment.views import AppointmentViewSet
 
+swagger_info = openapi.Info(
+    title="CRM Service API",
+    default_version='latest',
+    description="A Buildly RAD Core Compatible Logic Module/microservice.",
+)
+
 schema_view = get_schema_view(
-    openapi.Info(
-        title="CRM Service API",
-        default_version='latest',
-        description="A microservice for managing contacts and appointments.",
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
+    swagger_info, public=True, permission_classes=(permissions.AllowAny,)
 )
 
 router = routers.SimpleRouter()
@@ -29,7 +29,6 @@ router = routers.SimpleRouter()
 router.register(r'dynamic-form-field', DynamicFormFieldViewSet)
 router.register(r'contact', ContactViewSet)
 router.register(r'appointment', AppointmentViewSet)
-urlpatterns = router.urls
 
 urlpatterns = [
     re_path(r'^docs/swagger(?P<format>\.json|\.yaml)$',
@@ -41,5 +40,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
 ]
+
+urlpatterns += router.urls
 
 urlpatterns += staticfiles_urlpatterns()
