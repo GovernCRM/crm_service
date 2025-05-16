@@ -12,6 +12,7 @@ from drf_yasg import openapi
 from crm.views import health_check
 from contact.views import DynamicFormFieldViewSet, ContactViewSet
 from appointment.views import AppointmentViewSet
+from lists.views import ListViewSet
 
 swagger_info = openapi.Info(
     title="CRM Service API",
@@ -29,6 +30,7 @@ router = routers.SimpleRouter()
 router.register(r'dynamic-form-field', DynamicFormFieldViewSet)
 router.register(r'contact', ContactViewSet)
 router.register(r'appointment', AppointmentViewSet)
+router.register(r'lists', ListViewSet)
 
 urlpatterns = [
     re_path(r'^docs/swagger(?P<format>\.json|\.yaml)$',
