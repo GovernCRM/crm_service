@@ -172,9 +172,11 @@ REST_FRAMEWORK = {
 
 
 # JWT Configuration
-JWT_AUTH_DISABLED = True
-JWT_ALLOWED_ISSUER = 'buildly'
-JWT_PUBLIC_KEY_RSA_BUILDLY = os.getenv('JWT_PUBLIC_KEY_RSA_BUILDLY', '').replace('\\n', '\n')
+SIMPLE_JWT = {
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": os.getenv('SECRET_KEY', ''),  # Must match the issuer's SIGNING_KEY
+    "ISSUER": "Buildly",  # Must match the issuer's ISSUER
+}
 
 
 
