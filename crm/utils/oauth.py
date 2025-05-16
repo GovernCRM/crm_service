@@ -11,10 +11,11 @@ class FakeUser:
     A fake user object for authentication purposes in the second app.
     """
 
-    def __init__(self, core_user_uuid, username):
+    def __init__(self, core_user_uuid, username, organization_uuid=None):
         self.id = random.randint(1, 1000)
         self.username = username
         self.core_user_uuid = core_user_uuid
+        self.organization_uuid = organization_uuid
         self.is_authenticated = True  # Force authentication
         self.is_superuser = False
 
@@ -43,6 +44,7 @@ class CustomJWTAuthentication(BaseAuthentication):
             # Extract user details
             core_user_uuid = payload.get("core_user_uuid")
             username = payload.get("username", '')
+            organization_uuid = payload.get("organization_uuid")
 
             if not core_user_uuid:
                 raise AuthenticationFailed("Invalid token payload")
