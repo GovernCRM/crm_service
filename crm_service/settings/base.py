@@ -170,13 +170,6 @@ REST_FRAMEWORK = {
 }
 
 
-# JWT Configuration
-SIMPLE_JWT = {
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": os.getenv('SECRET_KEY', ''),  # Must match the issuer's SIGNING_KEY
-    "ISSUER": "Buildly",  # Must match the issuer's ISSUER
-}
-
 
 
 

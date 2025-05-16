@@ -54,7 +54,7 @@ class DynamicFormFieldViewSet(viewsets.ModelViewSet):
     """
     queryset = DynamicFormField.objects.all()
     serializer_class = DynamicFormFieldSerializer
-    permission_classes = (permissions.IsAuthenticated, ContactPermission)
+    permission_classes = (permissions.IsAuthenticated)
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('field_name',)
     ordering = ('field_name',)
