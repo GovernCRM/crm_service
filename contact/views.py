@@ -58,9 +58,9 @@ class DynamicFormFieldViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('field_name',)
     ordering = ('field_name',)
-    def perform_create(self, serializer):
-        user_uuid = self.request.session.get('jwt_user_uuid')
-        serializer.save(user_uuid=user_uuid)
+    # def perform_create(self, serializer):
+    #     user_uuid = self.request.session.get('jwt_user_uuid')
+    #     serializer.save(user_uuid=user_uuid)
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super(DynamicFormFieldViewSet, self).update(request, *args, **kwargs)

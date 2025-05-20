@@ -5,11 +5,11 @@ services:
   postgres_crm_service:
     container_name: postgres_crm_service
     healthcheck:
-      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+      test: 'pg_isready -h localhost -p 5432 -q -U root -d crm_service'
       interval: 3s
       timeout: 5s
       retries: 5
-    image: postgres:10.4-alpine
+    image: postgres:15
     environment:
       POSTGRES_DB: crm_service
       POSTGRES_USER: root
@@ -62,5 +62,10 @@ services:
         MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALFc9NFZaOaSwUMPNektbtJqEjYZ6IRB
         qhqvJu1hKPYn9HYd75c0gIDYHJ9lb7QwQvg44aO27104rDK0xSstzL0CAwEAAQ==
         -----END PUBLIC KEY-----
-      JWT_ISSUER: "crmservice"
+      JWT_ISSUER: "buildly"
       SEARCH_SERVICE_URL: "http://searchservice.local:8001"
+      DJANGO_SUPERUSER_EMAIL: "admin@buildly.io"
+      DJANGO_SUPERUSER_USERNAME: "admin"
+      DJANGO_SUPERUSER_PASSWORD: "admin"
+      SECRET_KEY: "secret here"
+      TOKEN_SECRET: "secret here"
